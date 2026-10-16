@@ -1,0 +1,337 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   funny-invitation — រចនាម៉ូតលិខិតផ្លូវការខ្មែរ (official letter, playful)
+   Tailwind v4 theme tokens
+   ========================================================================== */
+
+@theme {
+  --color-paper: #f7efdb;
+  --color-paper-light: #fbf6e9;
+  --color-paper-dark: #efe2c0;
+  --color-paper-edge: #e3d2a8;
+  --color-ink: #2b1d12;
+  --color-ink-soft: #5b4636;
+  --color-ceremonial: #9e1b1b;
+  --color-ceremonial-dark: #7a1212;
+  --color-gold: #b8860b;
+  --color-gold-light: #d9b44a;
+  --color-leaf: #1f7a3d;
+  --color-leaf-dark: #145c2c;
+
+  --font-sans: "Noto Sans Khmer", "Khmer OS Battambang", "Leelawadee UI", system-ui,
+    sans-serif;
+  --font-serif: "Noto Serif Khmer", "Noto Sans Khmer", Georgia, serif;
+  --font-display: "Moul", "Noto Serif Khmer", "Noto Sans Khmer", serif;
+}
+
+/* ------------------------------ base ------------------------------------ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background-color: #f3e9cf;
+  /* ផ្ទៃក្រដាសក្រែម៉ាប់ៗ — gradients + noise ស្រាល គ្មានរូបភាពធំ */
+  background-image:
+    radial-gradient(ellipse at 15% 10%, rgba(184, 134, 11, 0.1), transparent 45%),
+    radial-gradient(ellipse at 85% 25%, rgba(158, 27, 27, 0.07), transparent 40%),
+    radial-gradient(ellipse at 50% 100%, rgba(91, 70, 54, 0.12), transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-attachment: fixed, fixed, fixed, scroll;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: rgba(184, 134, 11, 0.3);
+}
+
+/* --------------------------- paper & borders ----------------------------- */
+
+.paper-sheet {
+  position: relative;
+  background-color: var(--color-paper-light);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(184, 134, 11, 0.07), transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  box-shadow:
+    0 18px 40px -12px rgba(43, 29, 18, 0.35),
+    0 2px 6px rgba(43, 29, 18, 0.15);
+}
+
+/* border ពីរជាន់ (double) — ក្រដាសផ្លូវការ */
+.official-border {
+  border: 3px double var(--color-ceremonial);
+  outline: 1px solid rgba(184, 134, 11, 0.55);
+  outline-offset: 6px;
+}
+
+/* ----------------------------- animations -------------------------------- */
+
+@keyframes letter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(46px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-30deg) scale(2.4);
+  }
+  60% {
+    opacity: 0.95;
+    transform: rotate(-12deg) scale(0.94);
+  }
+  80% {
+    transform: rotate(-15deg) scale(1.05);
+  }
+  100% {
+    opacity: 0.9;
+    transform: rotate(-14deg) scale(1);
+  }
+}
+
+@keyframes seal-press {
+  0% {
+    opacity: 0;
+    transform: scale(1.6) rotate(8deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(0.96) rotate(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes seal-break {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.08) rotate(-4deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(18deg);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-2.5deg) translateY(-1px);
+  }
+  50% {
+    transform: rotate(2deg) translateY(-2px);
+  }
+  75% {
+    transform: rotate(-1deg) translateY(-1px);
+  }
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+  }
+  15% {
+    opacity: 0.7;
+  }
+  85% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-140px) scale(1.15) rotate(14deg);
+  }
+}
+
+@keyframes emoji-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(-12vh) rotate(-12deg) scale(0.9);
+  }
+  8% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(112vh) rotate(16deg) scale(1.1);
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+.animate-letter-rise {
+  animation: letter-rise 0.8s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+.animate-stamp-in {
+  animation: stamp-in 0.7s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+.animate-seal-press {
+  animation: seal-press 0.9s cubic-bezier(0.3, 1.3, 0.5, 1) 0.35s both;
+}
+.animate-seal-break {
+  animation: seal-break 0.7s ease-in both;
+}
+.animate-modal-in {
+  animation: modal-in 0.28s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+.animate-backdrop-in {
+  animation: backdrop-in 0.22s ease both;
+}
+.animate-soft-pulse {
+  animation: soft-pulse 2.4s ease-in-out infinite;
+}
+
+.btn-wiggle:hover,
+.btn-wiggle:focus-visible {
+  animation: wiggle 0.55s ease-in-out;
+}
+
+/* envelope flap (CSS 3D) */
+.envelope-stage {
+  perspective: 1100px;
+}
+.envelope-flap {
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.95s cubic-bezier(0.4, 0.1, 0.2, 1);
+  backface-visibility: hidden;
+}
+.envelope-flap.is-open {
+  transform: rotateX(178deg);
+}
+
+/* ------------------------- accessibility helpers -------------------------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .btn-wiggle:hover,
+  .btn-wiggle:focus-visible {
+    animation: none;
+  }
+}
+
+/* ------------------------------- print ----------------------------------- */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    background-image: none !important;
+  }
+
+  /* លាក់អ្វីៗទាំងអស់ ហើយបង្ហាញតែ #print-area */
+  body * {
+    visibility: hidden !important;
+  }
+  #print-area,
+  #print-area * {
+    visibility: visible !important;
+  }
+  #print-area {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: 2px solid #9e1b1b !important;
+    outline: 1px solid #b8860b !important;
+    outline-offset: 4px !important;
+    background: #fbf6e9 !important;
+    background-image: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  .print-plain-shadow {
+    box-shadow: none !important;
+  }
+}

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <radialGradient id="waxGrad" cx="38%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#d9453d"/>
+      <stop offset="45%" stop-color="#b02020"/>
+      <stop offset="100%" stop-color="#6f0f0f"/>
+    </radialGradient>
+    <radialGradient id="waxSheen" cx="35%" cy="28%" r="40%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- wax bumps -->
+  <g fill="url(#waxGrad)">
+    <circle cx="106" cy="60" r="13.5"/>
+    <circle cx="103.5" cy="73.9" r="13.5"/>
+    <circle cx="96.1" cy="86.5" r="13.5"/>
+    <circle cx="84.7" cy="95.8" r="13.5"/>
+    <circle cx="70.8" cy="100.3" r="13.5"/>
+    <circle cx="56.1" cy="99.3" r="13.5"/>
+    <circle cx="42.3" cy="93.2" r="13.5"/>
+    <circle cx="31" cy="83" r="13.5"/>
+    <circle cx="23.5" cy="69.6" r="13.5"/>
+    <circle cx="20.5" cy="54.5" r="13.5"/>
+    <circle cx="22.5" cy="39.2" r="13.5"/>
+    <circle cx="29.2" cy="25.4" r="13.5"/>
+    <circle cx="39.8" cy="14.4" r="13.5"/>
+    <circle cx="53.2" cy="7.5" r="13.5"/>
+    <circle cx="68" cy="6.3" r="13.5"/>
+    <circle cx="82.4" cy="10.7" r="13.5"/>
+    <circle cx="94.6" cy="19.7" r="13.5"/>
+    <circle cx="102.8" cy="32.5" r="13.5"/>
+    <circle cx="106" cy="60" r="50"/>
+  </g>
+
+  <circle cx="60" cy="60" r="50" fill="url(#waxSheen)"/>
+  <circle cx="60" cy="60" r="43" fill="none" stroke="#5e0c0c" stroke-width="2.4" opacity="0.75"/>
+  <circle cx="60" cy="60" r="37" fill="none" stroke="#f2d9a0" stroke-width="1.2" opacity="0.55"/>
+
+  <!-- spoon + fork -->
+  <g stroke="#f7e3b2" stroke-width="3.2" stroke-linecap="round" fill="none" opacity="0.95">
+    <path d="M42 78 L56 46"/>
+    <path d="M78 78 L64 46"/>
+    <path d="M60 44 L68 38 M62.5 42 L70.5 36 M65 40 L73 34" stroke-width="2.4"/>
+  </g>
+  <ellipse cx="58" cy="41" rx="5.5" ry="8" transform="rotate(22 58 41)" fill="#f7e3b2"/>
+
+  <!-- stars -->
+  <g fill="#f2d9a0" opacity="0.85">
+    <circle cx="36" cy="34" r="1.8"/>
+    <circle cx="84" cy="34" r="1.8"/>
+    <circle cx="60" cy="92" r="1.8"/>
+  </g>
+</svg>
