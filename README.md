@@ -13,6 +13,7 @@
 - **ក្រដាសចំណាំ (StickyRule)** + **Typewriter** វាយអក្សរខ្មែរបន្តិចម្តងៗ (ប្រើ `Intl.Segmenter` — មិនកាត់ព្យញ្ជនៈ+សញ្ញា)។
 - **Toast**, **ដានព្រួញកណ្តុរ (PointerTrail)**, **បេះដូងប្រេះ (HeartBreak)**, **ស្លាបព្រាវិល (SpoonLoader)**។
 - **Easter egg 🥚** — ចុចលើ **ត្រាទិញ** ៥ ដង (នៅ Envelope ឬជើងលិខិត) → ភ្លៀងអាហារ + toast "រកឃើញអាថ៌កំបាំង!"។
+- **កម្រងអនុសាវរីយ៍ (Memories)** — ពេលអ្នកបដិសេធមិនចូលរួម ផ្ទៃយំនឹងបង្ហាញសារ + ប៊ូតុង **"មើលកម្រងអនុសាវរីយ៍ 📸"** ដើម្បីមើលរូបភាព/វីដេអូ (មាន lightbox + ព្រួញ ← →)។ ដាក់ឯកសារក្នុង `public/assets/images/memories/` ហើយបញ្ជីឈ្មោះក្នុង `src/config.js → memories`។
 - សំឡេង UI បន្ថែម (pop/thud/ding/sparkle/success/heartbreak) គោរព **🔇 mute** ដូចដើម។
 - ចំនួន particle ត្រូវបានកំណត់ (≤៤០ desktop / ≤២០ ទូរស័ព្ទ) ដើម្បីឲ្យរលូន។
 
@@ -78,6 +79,7 @@ emailjs: {
 ## 4. របៀបកែព័ត៌មានកម្មវិធី (Edit invitation details)
 
 - **ម៉ោង / ទីតាំង / អ្នករៀបចំ / កម្មវិធី** → `src/config.js` (ផ្នែក `event`)
+- **កម្រងអនុសាវរីយ៍** → ដាក់រូប/វីដេអូក្នុង `public/assets/images/memories/` រួចបញ្ជីឈ្មោះឯកសារក្នុង `src/config.js` (ផ្នែក `memories.photos` / `memories.videos`)
 - **ខ្លឹមសារលិខិត (កម្មវត្ថុ, body, ក្រមកំសាន្ត)** → `src/components/InvitationLetter.jsx`
 - **កាលបរិច្ឆេទ** — ថ្ងៃជាក់លាក់: `ថ្ងៃអាទិត្យ ទី២៥ ខែតុលា ឆ្នាំ២០២៦` ក្នុង `src/config.js` (`dateKhmer` / `dateISO`)
 
@@ -87,7 +89,8 @@ emailjs: {
 
 - [ ] បើកទំព័រ → envelope បង្ហាញ + ត្រាទិញ → ចុច "បើកលិខិតអញ្ជើញ ✉️" → flap បើក → លិខិតលេចឡើង
 - [ ] ចុច "អត់ទៅទេ 😭" → សំឡេងកំសាន្ត + modal "ច្បាស់ហើយមែនទេថាអត់ទៅ? 🥹"
-  - [ ] ចុច "អត់ទៅមែនទេ 😭" → ភ្លើងទឹកភ្នែក 😭 rain + សារ + "ត្រឡប់ទៅលិខិតវិញ" + 🔁 replay
+  - [ ] ចុច "អត់ទៅមែនទេ 😭" → ភ្លើងទឹកភ្នែក 😭 rain + សារ + ប៊ូតុងមើលកម្រងអនុសាវរីយ៍ + "ត្រឡប់ទៅលិខិតវិញ" + 🔁 replay
+  - [ ] ចុច "មើលកម្រងអនុសាវរីយ៍ 📸" → gallery បើក · ចុចរូប → lightbox · ← → ប្តូររូប · ESC/បិទ
   - [ ] ចុច "អូខេៗ ទៅក៏បាន 😂" → modal បិទ → ទម្រង់ចូលរួមបើក
 - [ ] Modal: ESC បិទ · Tab នៅក្នុង modal · focus ត្រឡប់ទៅប៊ូតុងដែលបានចុច · ចុច backdrop បិទ
 - [ ] 🔇 / 🔊 ប្តូរសំឡេង · ចងចាំក្រោយ refresh
@@ -137,8 +140,12 @@ funny_invitation/
 ├── vite.config.js
 ├── public/
 │   └── assets/
-│       ├── images/invitation-seal.svg   # ត្រាទិញ SVG (favicon ផង)
-│       └── sounds/                      # ដាក់ funny.mp3 នេះ (optional)
+│       ├── images/
+│       │   ├── invitation-seal.svg   # ត្រាទិញ SVG (favicon ផង)
+│       │   ├── paper.jpg             # វាយនភាពក្រដាស
+│       │   ├── sign.png              # ហត្ថលេខាអ្នករៀបចំ
+│       │   └── memories/             # រូប/វីដេអូកម្រងអនុសាវរីយ៍
+│       └── sounds/                   # ដាក់ funny.mp3 នេះ (optional)
 └── src/
     ├── main.jsx
     ├── App.jsx                     # state machine: envelope → letter → form → confirmation
@@ -169,6 +176,7 @@ funny_invitation/
         ├── Typewriter.jsx
         ├── Toast.jsx
         ├── HeartBreak.jsx
+        ├── Memories.jsx            # កម្រងអនុសាវរីយ៍ (gallery + lightbox)
         ├── SpoonLoader.jsx
         ├── PointerTrail.jsx
         ├── Modal.jsx               # accessible dialog (focus trap, ESC, backdrop)

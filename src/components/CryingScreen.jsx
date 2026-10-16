@@ -4,9 +4,10 @@
  * មានប៊ូតុង "ត្រឡប់ទៅលិខិតវិញ" និង replay 🔁 (respect mute)។
  */
 
-import { useMemo } from "react";
-import { playFunnySound } from "../audio";
+import { useMemo, useState } from "react";
+import { playEffect, playFunnySound } from "../audio";
 import { useAnimationsEnabled } from "../motion";
+import Memories from "./Memories";
 
 function EmojiRain() {
   const animationsOn = useAnimationsEnabled();
@@ -47,6 +48,13 @@ function EmojiRain() {
 }
 
 export default function CryingScreen({ onReturn }) {
+  const [showMemories, setShowMemories] = useState(false);
+
+  const openMemories = () => {
+    playEffect("sparkle");
+    setShowMemories(true);
+  };
+
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4">
       <EmojiRain />
@@ -58,11 +66,21 @@ export default function CryingScreen({ onReturn }) {
         <h1 className="mb-4 font-display text-xl leading-relaxed text-ceremonial sm:text-2xl">
           អូហូ! មិត្តសម្លាញ់ចិត្តដាច់ម្ល៉េះ! ខូចចិត្តហើយ! 💔
         </h1>
-        <p className="mb-8 text-sm leading-relaxed text-ink-soft">
+        <p className="mb-4 text-sm leading-relaxed text-ink-soft">
           អត់ជាអីទេ… យើងនៅតែមិត្តភក្តិគ្នា! លើកក្រោយត្រូវតែមកណាសម្លាញ់ 😋
+        </p>
+        <p className="mb-8 text-sm leading-relaxed text-ink">
+          ប្រសិនបើអ្នកសម្រេចចិត្តថាមិនទៅ សូមមើលកម្រងអនុសាវរីយ៍ 📸
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={openMemories}
+            className="btn-wiggle min-h-12 rounded-lg border-2 border-gold bg-gold px-6 py-3 font-semibold text-ink shadow-md transition-colors hover:bg-gold/80"
+          >
+            មើលកម្រងអនុសាវរីយ៍ 📸
+          </button>
           <button
             type="button"
             onClick={onReturn}
@@ -81,6 +99,8 @@ export default function CryingScreen({ onReturn }) {
           </button>
         </div>
       </section>
+
+      <Memories open={showMemories} onClose={() => setShowMemories(false)} />
     </main>
   );
 }
