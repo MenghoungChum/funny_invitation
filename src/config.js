@@ -22,9 +22,9 @@ export const CONFIG = {
   },
   emailjs: {
     // ⚠️ ដាក់តម្លៃពិតៗរបស់អ្នក (Public Key ពី dashboard EmailJS)
-    publicKey: "IVns0zpS81TRcUuQG8xoH",
-    serviceId: "service_mvuj6mk",
-    templateId: "template_v86izke",
+    publicKey: "JFyf4Gm9MNDW9L8_J",
+    serviceId: "service_hjyh6hd",
+    templateId: "template_mtautmv",
     // Gmail របស់អ្នករៀបចំ — ក៏ដាក់ក្នុង "To Email" នៅក្នុង template ដែរ
     organizerEmail: "menghoung262006@gmail.com",
   },

@@ -5,6 +5,19 @@
 
 ---
 
+## ✨ មុខងារកំសាន្តបន្ថែម (fun extras)
+
+- **ប៊ូតុង 🎬/🚫 (ជ្រុងខាងឆ្វេងក្រោម)** — បិទ/បើក **ចលនាទាំងអស់**។ តម្លៃដើមយកតាម OS (`prefers-reduced-motion`) ហើយចងចាំជម្រើសក្នុង `localStorage`។ ចលនាទាំងអស់ក៏ **ផ្អាកស្វ័យប្រវត្តិ** ពេល tab លាក់។
+- **តួក្រពះ (mascot)** — អារម្មណ៍ `idle/hungry/excited/sad/crying/party` ជាមួយ caption ខ្មែរប្តូររៀងរាល់ ~៥វិនាទី។
+- **ការរាប់ថយក្រោយ (Countdown)** — គិតទៅថ្ងៃកម្មវិធីជាលេខខ្មែរ។
+- **របារវាស់កម្រិតឃ្លាន (HungerMeter)** + **ក្រដាសចំណាំ (StickyRule)** + **Typewriter** វាយអក្សរខ្មែរបន្តិចម្តងៗ (ប្រើ `Intl.Segmenter` — មិនកាត់ព្យញ្ជនៈ+សញ្ញា)។
+- **Toast**, **ដានព្រួញកណ្តុរ (PointerTrail)**, **បេះដូងប្រេះ (HeartBreak)**, **ស្លាបព្រាវិល (SpoonLoader)**។
+- **Easter egg 🥚** — ចុចលើ **ត្រាទិញ** ៥ ដង (នៅ Envelope ឬជើងលិខិត) → ភ្លៀងអាហារ + toast "រកឃើញអាថ៌កំបាំង!"។
+- សំឡេង UI បន្ថែម (pop/thud/ding/sparkle/success/heartbreak) គោរព **🔇 mute** ដូចដើម។
+- ចំនួន particle ត្រូវបានកំណត់ (≤៤០ desktop / ≤២០ ទូរស័ព្ទ) ដើម្បីឲ្យរលូន។
+
+---
+
 ## 1. របៀបដំណើរការក្នុងម៉ាស៊ីន (Run locally)
 
 > គម្រោងប្រើ **ES modules + Vite** → ត្រូវការ dev server (មិនដំណើរការដោយ double-click `index.html` ទេ)។
@@ -87,6 +100,9 @@ emailjs: {
 - [ ] ចុច submit ២ ដងជាប់គ្នា → អ៊ីមែលចេញតែម្តង (in-flight lock)
 - [ ] បោះពុម្ព (Ctrl+P) → មើលឃើញតែ confirmation letter (A4) · PDF download ដំណើរការ (fallback: print)
 - [ ] ប្តូរ `prefers-reduced-motion` (OS setting) → animation ត្រូវបានរំលង
+- [ ] 🎬/🚫 toggle → ចលនាទាំងអស់ឈប់/ត្រឡប់វិញ (ចងចាំក្រោយ refresh)
+- [ ] ចុចត្រាទិញ ៥ ដង → Easter egg (ភ្លៀងអាហារ + toast)
+- [ ] Countdown ដើរ · HungerMeter បំពេញពេល scroll ដល់ · Typewriter វាយ body
 
 ---
 
@@ -127,10 +143,17 @@ funny_invitation/
     ├── main.jsx
     ├── App.jsx                     # state machine: envelope → letter → form → confirmation
     ├── config.js                   # ⭐ កែព័ត៌មានកម្មវិធី + EmailJS នៅទីនេះ
-    ├── audio.js                    # mp3 + Web Audio "womp womp" fallback
+    ├── motion.js                   # store ចលនា (OS + ជម្រើសអ្នកប្រើ) + useReducedMotion
+    ├── toastBus.js                 # module bus សម្រាប់ toast
+    ├── audio.js                    # mp3 + Web Audio fallback + UI effect sounds
     ├── email.js                    # EmailJS send + timeout + error handling
     ├── signature.js                # SignaturePad class (pointer events, high-DPI)
     ├── index.css                   # Tailwind v4 theme + animations + print CSS
+    ├── hooks/
+    │   ├── useInView.js
+    │   ├── useCountdown.js
+    │   ├── useSound.js
+    │   └── useSecretTaps.js
     └── components/
         ├── Envelope.jsx
         ├── WaxSeal.jsx
@@ -138,6 +161,17 @@ funny_invitation/
         ├── Stamp.jsx
         ├── InvitationLetter.jsx
         ├── MuteToggle.jsx
+        ├── AnimationToggle.jsx     # 🎬/🚫 បិទ/បើកចលនា
+        ├── TummyMascot.jsx         # តួក្រពះ (មានអារម្មណ៍)
+        ├── FloatingFoods.jsx
+        ├── HungerMeter.jsx
+        ├── Countdown.jsx
+        ├── StickyRule.jsx
+        ├── Typewriter.jsx
+        ├── Toast.jsx
+        ├── HeartBreak.jsx
+        ├── SpoonLoader.jsx
+        ├── PointerTrail.jsx
         ├── Modal.jsx               # accessible dialog (focus trap, ESC, backdrop)
         ├── DeclineModal.jsx
         ├── CryingScreen.jsx

@@ -144,3 +144,97 @@ function playSadTrombone() {
     }
   }, 2500);
 }
+
+/* ---------------------- UI effect sounds (upgrade pack) ------------------- */
+
+/** AudioContext រួមមួយ (lazy) — ជៀសវាងបង្កើត context ថ្មីរាល់សំឡេង */
+let sharedCtx = null;
+
+function getSharedCtx() {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return null;
+  if (!sharedCtx) {
+    try {
+      sharedCtx = new AudioCtx();
+    } catch {
+      return null;
+    }
+  }
+  if (sharedCtx.state === "suspended" && typeof sharedCtx.resume === "function") {
+    sharedCtx.resume().catch(() => {});
+  }
+  return sharedCtx;
+}
+
+/** បង្កើត tone មួយ (oscillator + gain envelope) */
+function blip(ctx, { type = "sine", from = 440, to = from, start = 0, dur = 0.12, gain = 0.15, filter = 0 }) {
+  const t0 = ctx.currentTime + start;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(from, t0);
+  if (to !== from) {
+    osc.frequency.exponentialRampToValueAtTime(Math.max(1, to), t0 + dur);
+  }
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gain, t0 + Math.min(0.02, dur * 0.3));
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+  let tail = osc;
+  if (filter > 0) {
+    const f = ctx.createBiquadFilter();
+    f.type = "lowpass";
+    f.frequency.value = filter;
+    osc.connect(f);
+    tail = f;
+  }
+  tail.connect(g);
+  g.connect(ctx.destination);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.03);
+}
+
+const EFFECT_PLAYERS = {
+  pop(ctx) {
+    blip(ctx, { type: "sine", from: 320, to: 640, dur: 0.1, gain: 0.18 });
+  },
+  thud(ctx) {
+    blip(ctx, { type: "triangle", from: 170, to: 60, dur: 0.22, gain: 0.26, filter: 900 });
+  },
+  ding(ctx) {
+    blip(ctx, { type: "sine", from: 880, to: 880, dur: 0.36, gain: 0.14 });
+    blip(ctx, { type: "sine", from: 1320, to: 1320, dur: 0.3, gain: 0.06, start: 0.02 });
+  },
+  sparkle(ctx) {
+    [1046.5, 1318.5, 1568, 2093].forEach((f, i) =>
+      blip(ctx, { type: "sine", from: f, to: f, dur: 0.12, gain: 0.09, start: i * 0.06 })
+    );
+  },
+  gulp(ctx) {
+    blip(ctx, { type: "sine", from: 340, to: 110, dur: 0.18, gain: 0.2, filter: 1200 });
+  },
+  success(ctx) {
+    [523.25, 659.25, 783.99].forEach((f, i) =>
+      blip(ctx, { type: "triangle", from: f, to: f, dur: 0.18, gain: 0.16, start: i * 0.11 })
+    );
+  },
+  heartbreak(ctx) {
+    blip(ctx, { type: "sawtooth", from: 420, to: 150, dur: 0.5, gain: 0.16, filter: 1400 });
+  },
+};
+
+/**
+ * ចាក់សំឡេងផ្ទៃ UI៖ "pop" · "thud" · "ding" · "sparkle" · "gulp" · "success" · "heartbreak"
+ * គោរព mute។ បើគ្មាន Web Audio → ស្ងាត់ៗ ដោយគ្មាន error។
+ */
+export function playEffect(kind = "pop") {
+  if (muted) return;
+  const ctx = getSharedCtx();
+  if (!ctx) return;
+  const player = EFFECT_PLAYERS[kind] || EFFECT_PLAYERS.pop;
+  try {
+    player(ctx);
+  } catch {
+    /* skip សំឡេង ដោយគ្មាន error */
+  }
+}

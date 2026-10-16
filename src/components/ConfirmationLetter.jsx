@@ -5,15 +5,22 @@
  * • confetti (reduced-motion aware)
  */
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { playEffect } from "../audio";
 import { CONFIG } from "../config";
 import Confetti from "./Confetti";
 import OrnamentalCorners from "./OrnamentalCorners";
 import Stamp from "./Stamp";
+import TummyMascot from "./TummyMascot";
+import WaxSeal from "./WaxSeal";
 
 export default function ConfirmationLetter({ data, onBack }) {
   const { event } = CONFIG;
   const printRef = useRef(null);
+
+  useEffect(() => {
+    playEffect("ding");
+  }, []);
 
   const handlePrint = () => {
     window.print();
@@ -50,7 +57,7 @@ export default function ConfirmationLetter({ data, onBack }) {
       <article
         id="print-area"
         ref={printRef}
-        className="paper-sheet official-border print-plain-shadow animate-letter-rise relative w-full max-w-2xl rounded-sm p-5 pb-10 sm:p-10"
+        className="paper-sheet official-border print-plain-shadow animate-paper-feed relative w-full max-w-2xl rounded-sm p-5 pb-10 sm:p-10"
         aria-labelledby="confirmation-title"
       >
         <OrnamentalCorners />
@@ -60,11 +67,21 @@ export default function ConfirmationLetter({ data, onBack }) {
         </div>
 
         <header className="mb-6 border-b-2 border-double border-gold/60 pb-4 text-center">
-          <p className="text-sm font-semibold tracking-wide text-ceremonial-dark">
+          <p className="text-lg font-display tracking-wide text-ceremonial-dark">
             ព្រះរាជាណាចក្រកម្ពុជា
           </p>
-          <p className="mt-1 text-xs tracking-widest text-ink-soft">ជាតិ សាសនា ព្រះមហាក្សត្រ</p>
+          <p className="mt-1 text-md tracking-widest font-display text-ink-soft">ជាតិ សាសនា ព្រះមហាក្សត្រ</p>
         </header>
+
+        <div className="mb-4 flex justify-center">
+          <span className="animate-badge-pop inline-flex items-center gap-1 rounded-full border-2 border-leaf bg-leaf/15 px-3 py-1 text-xs font-bold text-leaf-dark">
+            ✅ បញ្ជាក់រួច
+          </span>
+        </div>
+
+        <div className="mb-2 flex justify-center">
+          <TummyMascot mood="party" size={112} bubble />
+        </div>
 
         <h1
           id="confirmation-title"
@@ -117,7 +134,7 @@ export default function ConfirmationLetter({ data, onBack }) {
                 <img
                   src={data.signatureDataUrl}
                   alt={`ហត្ថលេខារបស់ ${data.attendeeName}`}
-                  className="max-h-full max-w-full object-contain"
+                  className="animate-fade-in max-h-full max-w-full object-contain"
                 />
               ) : (
                 <span className="text-xs text-ink-soft/60">គ្មានហត្ថលេខា</span>
@@ -127,6 +144,9 @@ export default function ConfirmationLetter({ data, onBack }) {
           <div className="text-end">
             <p className="text-sm text-ink-soft">អ្នករៀបចំកម្មវិធី</p>
             <p className="font-serif text-lg font-semibold text-ink">{event.organizer}</p>
+            <div className="mt-2 flex justify-end -rotate-6">
+              <WaxSeal size={104} />
+            </div>
           </div>
         </section>
 

@@ -79,6 +79,9 @@ function ensureInit(emailjs) {
 
 function friendlyError(err) {
   const code = err?.code || err?.name || "";
+  const rawText = typeof err?.text === "string" ? err.text.trim() : "";
+  // បង្ហាញអត្ថបទដើមរបស់ EmailJS ដើម្បីដឹងមូលហេតុពិត (ឧ. "The service ID is invalid")
+  const suffix = rawText ? `\n EmailJS ប្រាប់៖ ${rawText.slice(0, 200)}` : "";
   if (code === "timeout") {
     return "ការផ្ញើអ៊ីមែលចំណាយពេលយូរពេក។ សូមព្យាយាមម្តងទៀត។";
   }
@@ -87,16 +90,25 @@ function friendlyError(err) {
   }
   const status = err?.status;
   if (status === 400) {
-    return "ប្រព័ន្ធអ៊ីមែលមិនត្រូវបានកំណត់យ៉ាងត្រឹមត្រូវ (Service ឬ Template ID)។ សូមជូនដំណឹងដល់អ្នករៀបចំ។";
+    return (
+      "ប្រព័ន្ធអ៊ីមែលមិនត្រូវបានកំណត់យ៉ាងត្រឹមត្រូវ (Service ឬ Template ID)។ " +
+      "សូមពិនិត្យ៖ (១) Service ID (២) Template ID (៣) ក្នុង template ផ្នែក «To Email» ដាក់ Gmail ឬ {{to_email}} " +
+      "(៤) គណនី EmailJS បានបញ្ជាក់អ៊ីមែល (confirm email) ហើយឬនៅ។ " +
+      "សូមជូនដំណឹងដល់អ្នករៀបចំ។" +
+      suffix
+    );
   }
   if (status === 401 || status === 403) {
-    return "សិទ្ធិអ៊ីមែលមិនត្រឹមត្រូវ ឬ domain មិនបានអនុញ្ញាត។ សូមជូនដំណឹងដល់អ្នករៀបចំ។";
+    return (
+      "សិទ្ធិអ៊ីមែលមិនត្រឹមត្រូវ ឬ domain មិនបានអនុញ្ញាត (Allowed Origins)។ សូមជូនដំណឹងដល់អ្នករៀបចំ។" +
+      suffix
+    );
   }
   if (status === 429) {
-    return "ផ្ញើច្រើនពេកក្នុងរយៈពេលខ្លី។ សូមរង់ចាំបន្តិច ហើយព្យាយាមម្តងទៀត។";
+    return "ផ្ញើច្រើនពេកក្នុងរយៈពេលខ្លី។ សូមរង់ចាំបន្តិច ហើយព្យាយាមម្តងទៀត។" + suffix;
   }
-  if (typeof err?.text === "string" && err.text) {
-    return "មិនអាចផ្ញើអ៊ីមែលបាន។ សូមព្យាយាមម្តងទៀត។";
+  if (rawText) {
+    return "មិនអាចផ្ញើអ៊ីមែលបាន។ សូមព្យាយាមម្តងទៀត។" + suffix;
   }
   return "មិនអាចផ្ញើអ៊ីមែលបាន។ សូមព្យាយាមម្តងទៀត ឬទាក់ទងអ្នករៀបចំដោយផ្ទាល់។";
 }
@@ -139,8 +151,11 @@ export async function sendRegistration({ attendeeName, signatureDataUrl }) {
   const params = {
     event_title: CONFIG.event.title,
     attendee_name: attendeeName,
+    // alias សម្រាប់ template ដែលប្រើ {{name}} / {{time}}
+    name: attendeeName,
     event_date: CONFIG.event.dateKhmer,
     event_time: CONFIG.event.time,
+    time: CONFIG.event.time,
     event_location: CONFIG.event.location,
     organizer_name: CONFIG.event.organizer,
     to_email: CONFIG.emailjs.organizerEmail,
@@ -168,7 +183,10 @@ export async function sendRegistration({ attendeeName, signatureDataUrl }) {
     const result = await withTimeout(sendPromise, TIMEOUT_MS, "timeout");
     return { ok: true, message: "ផ្ញើដោយជោគជ័យ!", data: result };
   } catch (err) {
-    console.error("[EmailJS] ការផ្ញើបរាជ័យ:", err);
+    console.error(
+      "[EmailJS] ការផ្ញើបរាជ័យ — status:", err?.status ?? err?.code ?? "?",
+      "| text:", typeof err?.text === "string" ? err.text : err
+    );
     return { ok: false, code: err?.code || "send-failed", message: friendlyError(err) };
   }
 }

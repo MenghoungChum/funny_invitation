@@ -1,18 +1,25 @@
 /**
- * Confetti.jsx — confetti ស្រាលៗ canvas (reduced-motion aware)
- * ប្រើនៅពេល confirmation letter បង្ហាញ — confetti ឈប់ដោយខ្លួនឯងក្រោយ ~5វិនាទី។
+ * Confetti.jsx — confetti ស្រាលៗ canvas
+ * ប្រើនៅពេល confirmation letter បង្ហាញ — ឈប់ដោយខ្លួនឯងក្រោយ ~5វិនាទី។
+ * គោរព AnimationToggle · កំណត់ particle (≤40 desktop / ≤20 mobile) · ផ្អាកពេល tab លាក់។
  */
 
 import { useEffect, useRef } from "react";
-import { prefersReducedMotion } from "../motion";
+import { useAnimationsEnabled } from "../motion";
 
 const COLORS = ["#9e1b1b", "#b8860b", "#d9b44a", "#1f7a3d", "#f7efdb"];
 
+function particleCount() {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+  return isMobile ? 20 : 40;
+}
+
 export default function Confetti() {
   const canvasRef = useRef(null);
+  const animationsOn = useAnimationsEnabled();
 
   useEffect(() => {
-    if (prefersReducedMotion()) return undefined;
+    if (!animationsOn) return undefined;
     const canvas = canvasRef.current;
     if (!canvas) return undefined;
     const ctx = canvas.getContext("2d");
@@ -20,6 +27,7 @@ export default function Confetti() {
 
     let raf = 0;
     let stopped = false;
+    let hidden = document.hidden;
 
     const dpr = Math.max(1, window.devicePixelRatio || 1);
     const resize = () => {
@@ -30,7 +38,12 @@ export default function Confetti() {
     resize();
     window.addEventListener("resize", resize);
 
-    const particles = Array.from({ length: 90 }).map(() => ({
+    const onVisibility = () => {
+      hidden = document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const particles = Array.from({ length: particleCount() }).map(() => ({
       x: Math.random() * window.innerWidth,
       y: -20 - Math.random() * window.innerHeight * 0.6,
       w: 5 + Math.random() * 6,
@@ -48,21 +61,23 @@ export default function Confetti() {
     const tick = (now) => {
       if (stopped) return;
       const elapsed = now - start;
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rot += p.vr;
-        if (p.y > window.innerHeight + 20) {
-          p.y = -20;
-          p.x = Math.random() * window.innerWidth;
+      if (!hidden) {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        for (const p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vr;
+          if (p.y > window.innerHeight + 20) {
+            p.y = -20;
+            p.x = Math.random() * window.innerWidth;
+          }
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
         }
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
       }
       if (elapsed < DURATION) {
         raf = requestAnimationFrame(tick);
@@ -76,10 +91,11 @@ export default function Confetti() {
       stopped = true;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [animationsOn]);
 
-  if (prefersReducedMotion()) return null;
+  if (!animationsOn) return null;
   return (
     <canvas
       ref={canvasRef}

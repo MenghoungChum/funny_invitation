@@ -4,13 +4,15 @@
  */
 
 import { useMemo } from "react";
-import { prefersReducedMotion } from "../motion";
+import { useAnimationsEnabled } from "../motion";
 
 const EMOJIS = ["🍚", "🍛", "🍜", "😄", "😋", "✨", "🥢", "🍲"];
 
 export default function FloatingEmojis() {
+  const animationsOn = useAnimationsEnabled();
+
   const items = useMemo(() => {
-    if (prefersReducedMotion()) return [];
+    if (!animationsOn) return [];
     return Array.from({ length: 10 }).map((_, i) => ({
       id: i,
       emoji: EMOJIS[i % EMOJIS.length],
@@ -20,7 +22,7 @@ export default function FloatingEmojis() {
       delay: (i * 1.4) % 10,
       size: 1.2 + ((i * 5) % 10) / 10,
     }));
-  }, []);
+  }, [animationsOn]);
 
   if (items.length === 0) return null;
 

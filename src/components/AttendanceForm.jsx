@@ -6,11 +6,13 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { playEffect } from "../audio";
 import { formatRegisteredAt, isEmailConfigured, sendRegistration } from "../email";
 import Modal from "./Modal";
 import SignaturePadField from "./SignaturePadField";
+import SpoonLoader from "./SpoonLoader";
 
-const MAX_ATTEMPTS_PER_SESSION = 3;
+const MAX_SUCCESSES_PER_SESSION = 3;
 const COOLDOWN_MS = 30 * 1000;
 
 const NAME_ALLOWED = /^[\u1780-\u17FFA-Za-z\s.'’,\-()៍៎៏័៑្]+$/u;
@@ -20,18 +22,22 @@ function stripControlChars(value) {
   return value.replace(/[\u0000-\u001F\u007F]/g, "");
 }
 
-function readAttempts() {
+/**
+ * រាប់តែការផ្ញើជោគជ័យប៉ុណ្ណោះ (3 ជោគជ័យ/ស៊ីស្ថាន) —
+ * ការបរាជ័យ/សាកល្បងមិនត្រូវបានរាប់ទេ ព្រោះមិនបានផ្ញើអ៊ីមែលអ្វីឡើយ។
+ */
+function readSuccessCount() {
   try {
-    const n = Number(sessionStorage.getItem("funny-invitation-attempts"));
+    const n = Number(sessionStorage.getItem("funny-invitation-success-count"));
     return Number.isFinite(n) && n > 0 ? n : 0;
   } catch {
     return 0;
   }
 }
 
-function writeAttempts(n) {
+function writeSuccessCount(n) {
   try {
-    sessionStorage.setItem("funny-invitation-attempts", String(n));
+    sessionStorage.setItem("funny-invitation-success-count", String(n));
   } catch {
     /* ignore */
   }
@@ -76,11 +82,13 @@ export default function AttendanceForm({ open, onClose, onSuccess }) {
     const nameResult = validateName(name);
     setNameError(nameResult.ok ? "" : nameResult.message);
     if (!nameResult.ok) {
+      playEffect("thud");
       nameInputRef.current?.focus();
       return;
     }
 
     if (signatureRef.current?.isEmpty()) {
+      playEffect("thud");
       setSignError("សូមគូរហត្ថលេខា");
       return;
     }
@@ -95,10 +103,10 @@ export default function AttendanceForm({ open, onClose, onSuccess }) {
       });
       return;
     }
-    if (readAttempts() >= MAX_ATTEMPTS_PER_SESSION) {
+    if (readSuccessCount() >= MAX_SUCCESSES_PER_SESSION) {
       setStatus({
         kind: "info",
-        message: `បានសាកល្បង ${MAX_ATTEMPTS_PER_SESSION} ដងក្នុងស៊ីស្ថាននេះហើយ។ សូមទាក់ទងអ្នករៀបចំដោយផ្ទាល់បើត្រូវការជំនួយ។ (នេះគ្រាន់តែការកំណត់ខាង client មិនមែនសន្តិសុខពិតទេ)`,
+        message: `បានចុះឈ្មោះជោគជ័យ ${MAX_SUCCESSES_PER_SESSION} ដងក្នុងស៊ីស្ថាននេះហើយ។ សូមទាក់ទងអ្នករៀបចំដោយផ្ទាល់បើត្រូវការជំនួយបន្ថែម។ (ការកំណត់នេះជាការការពារ spam ខាង client មិនមែនសន្តិសុខពិតទេ)`,
       });
       return;
     }
@@ -112,6 +120,7 @@ export default function AttendanceForm({ open, onClose, onSuccess }) {
     inFlightRef.current = true;
     setSending(true);
     setStatus(null);
+    playEffect("pop");
 
     const compactSignature = signatureRef.current?.toCompactDataURL(300, 0.7) || null;
 
@@ -124,7 +133,7 @@ export default function AttendanceForm({ open, onClose, onSuccess }) {
     setSending(false);
 
     if (result.ok) {
-      writeAttempts(readAttempts() + 1);
+      writeSuccessCount(readSuccessCount() + 1);
       setCooldownUntil(Date.now() + COOLDOWN_MS);
       // signature ពេញទំហំសម្រាប់ confirmation letter (session-only)
       const fullSignature = signatureRef.current?.toDataURL() || compactSignature;
@@ -139,7 +148,8 @@ export default function AttendanceForm({ open, onClose, onSuccess }) {
       return;
     }
 
-    writeAttempts(readAttempts() + 1);
+    // ការបរាជ័យមិនត្រូវបានរាប់ក្នុងកំណត់ដែល — អ្នកប្រើអាចព្យាយាមម្តងទៀតបានគ្រប់ពេល
+    playEffect("thud");
     setStatus({ kind: "error", message: result.message });
   };
 
@@ -201,7 +211,7 @@ export default function AttendanceForm({ open, onClose, onSuccess }) {
           {status ? (
             <p
               role="status"
-              className={`mb-3 rounded-md border p-3 text-sm leading-relaxed ${
+              className={`mb-3 whitespace-pre-line rounded-md border p-3 text-sm leading-relaxed ${
                 status.kind === "error"
                   ? "border-ceremonial/60 bg-ceremonial/10 text-ceremonial-dark"
                   : "border-gold/60 bg-gold/10 text-ink-soft"
@@ -231,7 +241,14 @@ export default function AttendanceForm({ open, onClose, onSuccess }) {
             disabled={sending}
             className="btn-wiggle min-h-12 rounded-lg border-2 border-leaf-dark bg-leaf px-7 py-2.5 font-bold text-paper-light shadow-md transition-colors hover:bg-leaf-dark disabled:cursor-wait disabled:opacity-70"
           >
-            {sending ? "កំពុងផ្ញើ..." : "បញ្ជាក់ការចូលរួម"}
+            {sending ? (
+              <span className="inline-flex items-center gap-2">
+                <SpoonLoader size={18} showLabel={false} />
+                កំពុងផ្ញើ...
+              </span>
+            ) : (
+              "បញ្ជាក់ការចូលរួម"
+            )}
           </button>
         </div>
       </form>

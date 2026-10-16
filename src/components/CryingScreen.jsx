@@ -6,11 +6,15 @@
 
 import { useMemo } from "react";
 import { playFunnySound } from "../audio";
-import { prefersReducedMotion } from "../motion";
+import { useAnimationsEnabled } from "../motion";
 
 function EmojiRain() {
+  const animationsOn = useAnimationsEnabled();
+
   const drops = useMemo(() => {
-    const count = 22;
+    if (!animationsOn) return [];
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const count = isMobile ? 16 : 24;
     return Array.from({ length: count }).map((_, i) => ({
       id: i,
       left: (i * (100 / count) + ((i * 37) % 9)) % 100,
@@ -19,9 +23,9 @@ function EmojiRain() {
       size: 1.3 + ((i * 7) % 12) / 10,
       emoji: i % 5 === 0 ? "😢" : i % 3 === 0 ? "💔" : "😭",
     }));
-  }, []);
+  }, [animationsOn]);
 
-  if (prefersReducedMotion()) return null;
+  if (drops.length === 0) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -52,10 +56,10 @@ export default function CryingScreen({ onReturn }) {
           😭💔😭
         </p>
         <h1 className="mb-4 font-display text-xl leading-relaxed text-ceremonial sm:text-2xl">
-          អូហូ! មិត្តសម្លាញ់ចិត្តដាច់ម្ល៉េះ! ក្រពះយើងខូចចិត្តហើយ! 💔
+          អូហូ! មិត្តសម្លាញ់ចិត្តដាច់ម្ល៉េះ! ខូចចិត្តហើយ! 💔
         </h1>
         <p className="mb-8 text-sm leading-relaxed text-ink-soft">
-          អត់ជាអីទេ… យើងនៅតែមិត្តភក្តិគ្នា! ប៉ុន្តែចង្ក្រាននៅរង់ចាំអ្នកណាមកញ៉ាំជំនួស 😋
+          អត់ជាអីទេ… យើងនៅតែមិត្តភក្តិគ្នា! លើកក្រោយត្រូវតែមកណាសម្លាញ់ 😋
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-3">

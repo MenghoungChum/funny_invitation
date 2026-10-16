@@ -5,11 +5,63 @@
  */
 
 import { useEffect, useState } from "react";
-import { prefersReducedMotion } from "../motion";
+import { playEffect } from "../audio";
+import useSecretTaps from "../hooks/useSecretTaps";
+import { prefersReducedMotion, useAnimationsEnabled } from "../motion";
+import FloatingFoods from "./FloatingFoods";
+import { showToast } from "../toastBus";
+import TummyMascot from "./TummyMascot";
 import WaxSeal from "./WaxSeal";
+
+const BURST_EMOJIS = ["🍜", "🍚", "🍛", "🥟", "🍤", "🍡"];
+
+function FoodBurst() {
+  const drops = Array.from({ length: 24 }).map((_, i) => ({
+    id: i,
+    left: (i * 37) % 100,
+    size: 1.4 + (i % 5) * 0.3,
+    duration: 2.4 + (i % 6) * 0.2,
+    delay: (i % 8) * 0.12,
+    emoji: BURST_EMOJIS[i % BURST_EMOJIS.length],
+  }));
+  return (
+    <div className="no-print pointer-events-none fixed inset-0 z-[60] overflow-hidden" aria-hidden="true">
+      {drops.map((d) => (
+        <span
+          key={d.id}
+          className="absolute -top-10"
+          style={{
+            left: `${d.left}%`,
+            fontSize: `${d.size}rem`,
+            animation: `emoji-fall ${d.duration}s linear ${d.delay}s 1`,
+          }}
+        >
+          {d.emoji}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export default function Envelope({ onOpen, opening }) {
   const [brokenSeal, setBrokenSeal] = useState(false);
+  const [burst, setBurst] = useState(false);
+  const animationsOn = useAnimationsEnabled();
+
+  const onSecretTap = useSecretTaps(5, () => {
+    setBurst(true);
+    playEffect("sparkle");
+    showToast("រកឃើញអាថ៌កំបាំង! ចំណីឥតគិតថ្លៃមួយចាន 🍜 (សន្យាលេង)", {
+      kind: "success",
+      duration: 5000,
+    });
+    window.setTimeout(() => setBurst(false), 2800);
+  });
+
+  const handleSealTap = () => {
+    playEffect("pop");
+    onSecretTap();
+  };
 
   useEffect(() => {
     if (opening && !prefersReducedMotion()) {
@@ -20,11 +72,14 @@ export default function Envelope({ onOpen, opening }) {
   }, [opening]);
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+    <main className="relative flex min-h-dvh flex-col items-center justify-center px-4 py-10">
+      <FloatingFoods density={0.8} />
+      {burst ? <FoodBurst /> : null}
+
       <p className="mb-3 text-center font-display text-lg text-ceremonial drop-shadow-sm">
         ព្រះរាជាណាចក្រកម្ពុជា
       </p>
-      <p className="mb-8 text-center text-xs tracking-wide text-ink-soft">
+      <p className="mb-8 text-center text-xs font-display tracking-wide text-ink-soft">
         ជាតិ សាសនា ព្រះមហាក្សត្រ
       </p>
 
@@ -53,13 +108,56 @@ export default function Envelope({ onOpen, opening }) {
             aria-hidden="true"
           />
 
-          {/* ត្រាទិញនៅចំណុចកំពូល */}
-          <div
-            className={`absolute left-1/2 top-[40%] z-30 -translate-x-1/2 -translate-y-1/2 ${
-              opening && !brokenSeal ? "" : ""
-            } ${brokenSeal ? "animate-seal-break" : "animate-seal-press"}`}
+          {/* រស្មីវិលនៅខាងក្រោយត្រា (sparkle rays) */}
+          {animationsOn ? (
+            <div
+              className="pointer-events-none absolute left-1/2 top-[40%] z-20 -translate-x-1/2 -translate-y-1/2"
+              aria-hidden="true"
+            >
+              <svg className="animate-ray-spin" width="230" height="230" viewBox="0 0 220 220">
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <rect
+                    key={i}
+                    x="107.5"
+                    y="10"
+                    width="5"
+                    height="38"
+                    rx="2.5"
+                    fill="#d9b44a"
+                    opacity="0.45"
+                    transform={`rotate(${i * 30} 110 110)`}
+                  />
+                ))}
+              </svg>
+            </div>
+          ) : null}
+
+          {/* ត្រាទិញនៅចំណុចកំពូល — ចុច ៥ ដង បើក easter egg */}
+          <button
+            type="button"
+            onClick={handleSealTap}
+            onDoubleClick={(e) => e.preventDefault()}
+            aria-label="ត្រាទិញ — ចុចច្រើនដង បើចង់ដឹងអាថ៌កំបាំង"
+            className="absolute left-1/2 top-[40%] z-30 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full"
           >
-            <WaxSeal size={84} broken={brokenSeal} className="drop-shadow-md" />
+            <span
+              className={`block ${brokenSeal ? "animate-seal-break" : "animate-seal-press"}`}
+            >
+              <WaxSeal size={128} className="drop-shadow-md" />
+            </span>
+          </button>
+
+          {/* ត្រាប្រៃសណីយ៍តូច (postage stamp) — បន្ថែមបែបផ្លូវការ 😄 */}
+          <div
+            className="absolute bottom-3 left-3 z-10 -rotate-6 rounded-sm border-2 border-dashed border-ceremonial/70 bg-paper-light p-1 shadow-sm"
+            aria-hidden="true"
+          >
+            <div className="flex h-14 w-12 flex-col items-center justify-center rounded-sm border border-gold/60 bg-paper">
+              <span className="text-xl leading-none">🍚</span>
+              <span className="mt-0.5 text-[8px] leading-none font-semibold text-ceremonial">
+                ញ៉ាំ
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -67,9 +165,11 @@ export default function Envelope({ onOpen, opening }) {
       <h1 className="mt-10 text-center font-display text-2xl text-ink sm:text-3xl">
         លិខិតអញ្ជើញជាផ្លូវការ
       </h1>
-      <p className="mt-2 mb-8 text-center text-sm text-ink-soft">
+      <p className="mt-2 mb-6 text-center text-sm text-ink-soft">
         មានលិខិតមួយប្រាប់អ្នក… សូមបើកស្រោមសំបុត្រ 👀
       </p>
+
+      <TummyMascot mood={opening ? "excited" : "hungry"} size={124} bubble className="mb-6" />
 
       <button
         type="button"

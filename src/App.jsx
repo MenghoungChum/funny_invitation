@@ -4,8 +4,10 @@
  */
 
 import { useCallback, useState } from "react";
-import { playFunnySound } from "./audio";
+import { playEffect, playFunnySound } from "./audio";
 import { prefersReducedMotion } from "./motion";
+import { showToast } from "./toastBus";
+import AnimationToggle from "./components/AnimationToggle";
 import AttendanceForm from "./components/AttendanceForm";
 import ConfirmationLetter from "./components/ConfirmationLetter";
 import CryingScreen from "./components/CryingScreen";
@@ -14,6 +16,8 @@ import Envelope from "./components/Envelope";
 import FloatingEmojis from "./components/FloatingEmojis";
 import InvitationLetter from "./components/InvitationLetter";
 import MuteToggle from "./components/MuteToggle";
+import PointerTrail from "./components/PointerTrail";
+import ToastHost from "./components/Toast";
 
 const OPEN_DURATION_MS = 1000;
 
@@ -50,15 +54,20 @@ export default function App() {
   const changeMind = useCallback(() => {
     setShowDeclineModal(false);
     setShowForm(true);
+    playEffect("success");
+    showToast("អរគុណដែលផ្លាស់ចិត្តទៅ! 🎉", { kind: "success" });
   }, []);
 
   const handleJoin = useCallback(() => {
+    playEffect("pop");
     setShowForm(true);
   }, []);
 
   const handleRegistrationSuccess = useCallback((data) => {
     setShowForm(false);
     setConfirmation(data);
+    playEffect("success");
+    showToast("ចុះឈ្មោះជោគជ័យ! សូមអបអរសាទរ! 🎉", { kind: "success" });
     window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }, []);
 
@@ -82,6 +91,9 @@ export default function App() {
       </a>
 
       <MuteToggle />
+      <AnimationToggle />
+      <PointerTrail />
+      <ToastHost />
 
       {phase === "letter" && !confirmation ? <FloatingEmojis /> : null}
 
@@ -111,6 +123,10 @@ export default function App() {
         onClose={() => setShowForm(false)}
         onSuccess={handleRegistrationSuccess}
       />
+
+      <footer className="no-print pb-8 text-center text-xs text-ink-soft/70">
+        ធ្វើដោយក្តីស្រលាញ់ និងក្រពះឃ្លាន ❤️🍚
+      </footer>
     </div>
   );
 }
