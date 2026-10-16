@@ -10,7 +10,7 @@
 - **ប៊ូតុង 🎬/🚫 (ជ្រុងខាងឆ្វេងក្រោម)** — បិទ/បើក **ចលនាទាំងអស់**។ តម្លៃដើមយកតាម OS (`prefers-reduced-motion`) ហើយចងចាំជម្រើសក្នុង `localStorage`។ ចលនាទាំងអស់ក៏ **ផ្អាកស្វ័យប្រវត្តិ** ពេល tab លាក់។
 - **តួក្រពះ (mascot)** — អារម្មណ៍ `idle/hungry/excited/sad/crying/party` ជាមួយ caption ខ្មែរប្តូររៀងរាល់ ~៥វិនាទី។
 - **ការរាប់ថយក្រោយ (Countdown)** — គិតទៅថ្ងៃកម្មវិធីជាលេខខ្មែរ។
-- **របារវាស់កម្រិតឃ្លាន (HungerMeter)** + **ក្រដាសចំណាំ (StickyRule)** + **Typewriter** វាយអក្សរខ្មែរបន្តិចម្តងៗ (ប្រើ `Intl.Segmenter` — មិនកាត់ព្យញ្ជនៈ+សញ្ញា)។
+- **ក្រដាសចំណាំ (StickyRule)** + **Typewriter** វាយអក្សរខ្មែរបន្តិចម្តងៗ (ប្រើ `Intl.Segmenter` — មិនកាត់ព្យញ្ជនៈ+សញ្ញា)។
 - **Toast**, **ដានព្រួញកណ្តុរ (PointerTrail)**, **បេះដូងប្រេះ (HeartBreak)**, **ស្លាបព្រាវិល (SpoonLoader)**។
 - **Easter egg 🥚** — ចុចលើ **ត្រាទិញ** ៥ ដង (នៅ Envelope ឬជើងលិខិត) → ភ្លៀងអាហារ + toast "រកឃើញអាថ៌កំបាំង!"។
 - សំឡេង UI បន្ថែម (pop/thud/ding/sparkle/success/heartbreak) គោរព **🔇 mute** ដូចដើម។
@@ -102,7 +102,7 @@ emailjs: {
 - [ ] ប្តូរ `prefers-reduced-motion` (OS setting) → animation ត្រូវបានរំលង
 - [ ] 🎬/🚫 toggle → ចលនាទាំងអស់ឈប់/ត្រឡប់វិញ (ចងចាំក្រោយ refresh)
 - [ ] ចុចត្រាទិញ ៥ ដង → Easter egg (ភ្លៀងអាហារ + toast)
-- [ ] Countdown ដើរ · HungerMeter បំពេញពេល scroll ដល់ · Typewriter វាយ body
+- [ ] Countdown ដើរ · Typewriter វាយ body
 
 ---
 
@@ -164,7 +164,6 @@ funny_invitation/
         ├── AnimationToggle.jsx     # 🎬/🚫 បិទ/បើកចលនា
         ├── TummyMascot.jsx         # តួក្រពះ (មានអារម្មណ៍)
         ├── FloatingFoods.jsx
-        ├── HungerMeter.jsx
         ├── Countdown.jsx
         ├── StickyRule.jsx
         ├── Typewriter.jsx

@@ -9,7 +9,6 @@ import { CONFIG } from "../config";
 import useInView from "../hooks/useInView";
 import useSecretTaps from "../hooks/useSecretTaps";
 import Countdown from "./Countdown";
-import HungerMeter from "./HungerMeter";
 import OrnamentalCorners from "./OrnamentalCorners";
 import Stamp from "./Stamp";
 import StickyRule from "./StickyRule";
@@ -142,7 +141,7 @@ export default function InvitationLetter({ onJoin, onDecline }) {
           </dl>
         </section>
 
-        {/* ការរាប់ថយក្រោយ + របារវាស់កម្រិតឃ្លាន */}
+        {/* ការរាប់ថយក្រោយ */}
         <section className="mb-6" aria-labelledby="countdown-title">
           <h2
             id="countdown-title"
@@ -150,8 +149,7 @@ export default function InvitationLetter({ onJoin, onDecline }) {
           >
             ការរាប់ថយក្រោយ ⏳
           </h2>
-          <Countdown className="mb-5" />
-          <HungerMeter value={92} />
+          <Countdown />
         </section>
 
         {/* ក្រមកំសាន្ត */}

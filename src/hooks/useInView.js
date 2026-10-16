@@ -1,6 +1,6 @@
 /**
  * useInView.js — តាមដានថា element ចូលក្នុង viewport ឬនៅ (IntersectionObserver)
- * ប្រើសម្រាប់ trigger animation ពេល scroll ដល់ (ឧ. HungerMeter, Typewriter)។
+ * ប្រើសម្រាប់ trigger animation ពេល scroll ដល់ (ឧ. Typewriter)។
  * ត្រឡប់ [ref, inView]។ បើគ្មាន IntersectionObserver → ចាត់ទុកថាឃើញភ្លាម។
  */
 
